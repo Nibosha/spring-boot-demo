@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: demoproject
+  codec:
+    max-in-memory-size: 5000KB
+aws:
+  ip-ranges:
+    url: https://ip-ranges.amazonaws.com/ip-ranges.json
+    valid-regions: EU, US, AP, CN, SA, AF, CA, GLOBAL, IL, ME, MX
+server:
+  port: 8082
+
