@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS IPs by region</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<h1>AWS IPs by region</h1>
+
+<div class="container">
+    <form th:action="@{http://localhost:8082/ip-ranges}" method="get" id="region-form">
+        <input type="text" id="region" name="region" placeholder="Insert an AWS region" />
+        <input type="submit" value="Submit" />
+    </form>
+
+    <div id="response-table" style="display:none;">
+        <h2>IP Ranges</h2>
+        <table id="result-table">
+            <thead>
+            <tr>
+                <th>IP Prefix</th>
+                <th>Region</th>
+                <th>Service</th>
+                <th>Network Border Group</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.getElementById('region-form').addEventListener('submit', function(event) {
+        event.preventDefault();  // Evitar que el formulario se envíe de forma convencional
+
+        const region = document.getElementById('region').value;
+        if (region) {
+            fetch(`/ip-ranges?region=${region}`, {
+                method: 'GET',
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Mostrar la tabla
+                    document.getElementById('response-table').style.display = 'block';
+
+                    const tbody = document.getElementById('result-table').getElementsByTagName('tbody')[0];
+                    tbody.innerHTML = ''; // Limpiar la tabla antes de agregar los nuevos datos
+
+                    // Insertar las filas en la tabla
+                    data.prefixes.forEach(item => {
+                        const row = tbody.insertRow();
+                        row.insertCell(0).textContent = item.ip_prefix;
+                        row.insertCell(1).textContent = item.region;
+                        row.insertCell(2).textContent = item.service;
+                        row.insertCell(3).textContent = item.network_border_group;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al obtener los datos:', error);
+                });
+        } else {
+            alert("Por favor, ingresa una región.");
+        }
+    });
+</script>
+</body>
+</html>

@@ -9,4 +9,3 @@ aws:
     valid-regions: EU, US, AP, CN, SA, AF, CA, GLOBAL, IL, ME, MX
 server:
   port: 8082
-
